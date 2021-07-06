@@ -1,6 +1,6 @@
 # Semvruler
 
-Semvruler is a utility to match and compare semantic versions in ruby that manage versions as value objects and allows to create rules.
+Provides some utility classes to read, compare and match [semantic versions](https://semver.org/).
 
 ## Installation
 
@@ -20,25 +20,69 @@ Or install it yourself as:
 
 ## Usage
 
+### Creating versions 
+
+```ruby
+
+    # Creates and destructure version string
+    version = Semvruler.version('2.2.5-pr.0')
+
+    version.major # => 2 
+    version.minor # => 2 
+    version.patch # => 5
+    version.build # => nil
+    version.prerelease # => ['pr','0']
+
+    # You can put back together the original string
+    version.to_s # => '2.2.5-pr.0'
+
+    # Returns an array when multiple versions passed
+    versions = Semvruler.versions(['3.4.5', '2.2.5', '1.1.1', '1.1.1-pr.0'])
 ```
-    rule = Semvruler.rule('~>2.0.2')
-    rule2 = Semvruler.rule('~>2.3.2')
-    version = Semvruler.version('2.2.5')
-    version2 = Semvruler.version('2.2.5')
 
-    version.major
-    version.minor
-    version.patch
-    version.build
-    version.prerelease
+### Comparable versions
 
-    [version, version2].sort
-    [version, version2].find(rule)
+Versions implement ruby's comparable interface and '~>' operator as well.
 
-    rule3 = rule.union(rule2)
-    rule4 = rule.intersec(rule2)
+```ruby
+    versions = Semvruler.versions(['3.4.5', '2.2.5', '1.1.1', '1.1.1-pr.0'])
+    versions.sort # => ["1.1.1-pr.0", "1.1.1", "2.2.5", "3.4.5"]
 
-    rule.match(version)
+    ver1 = version[0]
+    ver2 = version[1]
+
+    ver1 != ver2 # => true
+    ver1 == ver2 # => false
+    ver1 > ver2 # => true
+    ver1 >= ver2 # => true
+    ver1 < ver2 # => false
+    ver1 <= ver2 # => false
+```
+
+### Rules instantiation
+
+```ruby
+    rule = Semvruler.rule('~> 2.0.2')
+    rule.to_s # => '~> 2.0.2'
+
+    # Rules can be adjusted
+    rule.add('< 10.0.1')
+    rule.remove('< 10.0.1')
+    rule.merge(rule2)
+```
+
+### Rules Matching
+
+```ruby
+    rule = Semvruler.rule('!= 2.0.2')
+    rule.match?('2.0.2') # => false
+    rule.match?('2.3.2') # => true
+
+    # Rules respond to to_proc
+    rule = Semvruler.rule('~> 2.0.2')
+    ['3.2.1', '1.2.3', '2.1.1'].find(&rule) # => '2.1.1'
+    ['3.2.1', '1.2.3', '2.1.1'].select(&rule) # => ['2.1.1']
+    ['3.2.1', '1.2.3', '2.1.1'].reject(&rule) # => ['3.2.1', '1.2.3']
 ```
 
 ## Development
