@@ -13,7 +13,6 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
   spec.required_ruby_version = '>= 2.5.0'
 
-  spec.metadata['allowed_push_host'] = 'http://rubygems.org'
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = spec.homepage
   spec.metadata['changelog_uri'] = 'https://github.com/nika-kirosh/semvruler/blob/main/CHANGELOG.md'
@@ -24,4 +23,11 @@ Gem::Specification.new do |spec|
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
+
+  # Dependencies
+
+  spec.add_development_dependency  'pry', '~> 0.14.0'
+  spec.add_development_dependency  'rake', '~> 13.0'
+  spec.add_development_dependency  'rspec', '~> 3.0'
+  spec.add_development_dependency  'rubocop', '~> 1.7'
 end
